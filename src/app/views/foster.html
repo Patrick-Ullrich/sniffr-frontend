@@ -1,0 +1,146 @@
+<div class="table-responsive-vertical md-whiteframe-z1">
+    <table id="table" class="table table-hover table-bordered" ng-if="!vm.selectedUser">
+        <thead>
+            <tr>
+                <th></th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Standing</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="data in vm.users track by $index">
+                <td style="text-align: center;">
+                    <md-list-item>
+                        <img src="https://getokular.com/img/user_1.jpg" class="md-avatar" />
+                    </md-list-item>
+                </td>
+                <td style="vertical-align: middle!important;" data-title="First Name">{{data.firstName}}</td>
+                <td style="vertical-align: middle!important;" data-title="Last Type">{{data.lastName}}</td>
+                <td style="vertical-align: middle!important;" data-title="Standing">Approved</td>
+                <td style=" vertical-align: middle!important; text-align: right; ">
+                    <md-button ng-click="vm.selectFoster(data.userId) " class="md-raised md-accent ">
+                        View
+                    </md-button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <!-- Profile -->
+    <div ng-if="vm.selectedUser ">
+        <md-content md-theme="dark" class="md-padding">
+            <div layout layout-sm="column ">
+                <md-input-container flex="20 ">
+                    <img style="border-radius: 50%; width: 125px; height: 125px; " src="https://getokular.com/img/user_1.jpg " />
+                </md-input-container>
+                <div>
+                    <h1 class="panel-widget-tittle ">{{vm.selectedUser.firstName}} {{vm.selectedUser.lastName}}</h1>
+                </div>
+            </div>
+        </md-content>
+
+        <div layout layout-sm="column ">
+            <div flex>
+                <md-toolbar class="md-theme-light ">
+                    <h2 class="md-toolbar-tools ">
+                        <span>Dogs in care</span>
+                    </h2>
+                </md-toolbar>
+                <md-content class="md-padding ">
+                    <div layout layout-sm="column ">
+                        <md-list flex>
+                            <md-list-item class="md-1-line" ng-if="vm.selectedUserDogs.length == 0">
+                                <div>
+                                    <p>none</p>
+                                </div>
+                            </md-list-item>
+                            <md-list-item class="md-2-line " ng-repeat="dog in vm.selectedUserDogs track by $index ">
+                                <img ng-src="{{dog.profileUrl}} " class="md-avatar ">
+                                <div class="md-list-item-text ">
+                                    <h3>{{dog.name}}</h3>
+                                    <p>{{dog.dogTypeId | dogTypeFilter : vm.dogTypes}}</p>
+                                </div>
+                            </md-list-item>
+                        </md-list>
+                    </div>
+                </md-content>
+            </div>
+        </div>
+
+        <div layout layout-sm="column">
+            <div flex="20">
+                <md-toolbar class="md-theme-light ">
+                    <h2 class="md-toolbar-tools ">
+                        <span>Phone</span>
+                    </h2>
+                </md-toolbar>
+                <md-content class="md-padding ">
+                    <md-list flex>
+                        <md-list-item class="md-2-line ">
+                            <div class="md-list-item-text ">
+                                <h3>Phone Number</h3>
+                                <p>{{vm.phone.phoneNumber || 'none'}}</p>
+                            </div>
+                        </md-list-item>
+                    </md-list>
+                </md-content>
+            </div>
+            <div flex="40">
+                <md-toolbar class="md-theme-light ">
+                    <h2 class="md-toolbar-tools ">
+                        <span>Property Information</span>
+                    </h2>
+                </md-toolbar>
+                <md-content class="md-padding ">
+                    <md-list flex>
+                        <md-list-item class="md-2-line ">
+                            <div class="md-list-item-text ">
+                                <h3>Property Type</h3>
+                                <p>{{(vm.property.houseTypeId | houseTypeFilter : vm.houseTypes) || 'none'}}</p>
+                            </div>
+                        </md-list-item>
+                        <md-list-item class="md-2-line ">
+                            <div class="md-list-item-text ">
+                                <h3>Property Size</h3>
+                                <p>{{vm.property.squareFeet || 'none'}}</p>
+                            </div>
+                        </md-list-item>
+                    </md-list>
+                </md-content>
+            </div>
+            <div flex="40">
+                <md-toolbar class="md-theme-light ">
+                    <h2 class="md-toolbar-tools ">
+                        <span>Address</span>
+                    </h2>
+                </md-toolbar>
+                <md-content class="md-padding ">
+                    <md-list flex>
+                        <md-list-item class="md-2-line ">
+                            <div class="md-list-item-text ">
+                                <h3>Address Line 1</h3>
+                                <p>{{vm.address.addressLine1 || 'none'}}</p>
+                            </div>
+                        </md-list-item>
+                        <md-list-item class="md-2-line ">
+                            <div class="md-list-item-text ">
+                                <h3>Postal Code</h3>
+                                <p>{{vm.address.postalCode || 'none'}}</p>
+                            </div>
+                        </md-list-item>
+                        <md-list-item class="md-2-line ">
+                            <div class="md-list-item-text ">
+                                <h3>City</h3>
+                                <p>{{vm.address.city || 'none'}}</p>
+                            </div>
+                        </md-list-item>
+                    </md-list>
+                </md-content>
+            </div>
+        </div>
+
+    </div>
+</div>

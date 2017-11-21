@@ -1,0 +1,405 @@
+<div class="table-responsive-vertical md-whiteframe-z1">
+    <table id="table" class="table table-hover table-bordered" ng-if="!vm.selectedDog && !vm.dogChat && !vm.isNewDog">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Dog Name</th>
+                <th>Dog Type</th>
+                <th>Foster</th>
+                <th>Adoption Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="data in vm.dogs track by $index">
+                <td style="text-align: center;">
+                    <md-list-item>
+                        <img ng-src="{{data.profileUrl}}" class="md-avatar" />
+                    </md-list-item>
+                </td>
+                <td style="vertical-align: middle!important;" data-title="Dog Name">{{data.name}}</td>
+                <td style="vertical-align: middle!important;" data-title="Dog Type">{{data.dogTypeId | dogTypeFilter: vm.dogTypes}}</td>
+                <td style="vertical-align: middle!important;" data-title="Foster">{{data.careGiverId | userFilter : vm.users}}</td>
+                <td style="vertical-align: middle!important;" data-title="Adoption Status">{{data.adoptionStatus | adoptionStatusFilter : vm.adoptionStatuses}}</td>
+                <td style="vertical-align: middle!important; text-align: right;">
+                    <md-button ng-click="vm.selectDog(data.dogId)" class="md-raised md-accent">
+                        View
+                    </md-button>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="6" style="text-align: right">
+                    <md-button ng-click="vm.addNewDog()" class="md-raised md-accent">
+                        Add Dog
+                    </md-button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- Profile -->
+    <div ng-if="vm.selectedDog">
+        <md-content md-theme="dark" class="md-padding">
+            <div layout layout-sm="column">
+                <md-input-container flex="20">
+                    <img style="border-radius: 50%; width: 125px; height: 125px;" ng-src="{{vm.selectedDog.profileUrl}}" />
+                </md-input-container>
+                <div flex="80">
+                    <div layout layout-sm="column">
+                        <md-input-container flex>
+                            <label ng-class="{invalid : vm.errors.name != null && vm.errors.name.message.length > 0}">Dog Name</label>
+                            <input ng-model="vm.selectedDog.name" ng-keypress="vm.errors.name = {}" ng-class="{'invalid-input' : vm.errors.name != null && vm.errors.name.message.length > 0}">
+                            <div ng-if="vm.errors.name" class="md-label">
+                                <div class="error-msg invalid">{{vm.errors.name.message}}</div>
+                            </div>
+                        </md-input-container>
+                    </div>
+                    <div layout layout-sm="column">
+                        <md-input-container flex>
+                            <label>Dog Type</label>
+                            <md-select ng-model="vm.selectedDog.dogTypeId">
+                                <md-option ng-value="dogType.dogTypeId" ng-repeat="dogType in vm.dogTypes">{{ dogType.description }}</md-option>
+                            </md-select>
+                        </md-input-container>
+                        <md-input-container flex>
+                            <label ng-class="{invalid : vm.errors.adoptionStatus != null && vm.errors.adoptionStatus.message.length > 0}">Adoption Status</label>
+                            <md-select ng-model="vm.selectedDog.adoptionStatus" ng-change="vm.errors.adoptionStatus = {}" ng-class="{'invalid-input' : vm.errors.adoptionStatus != null && vm.errors.adoptionStatus.message.length > 0}">
+                                <md-option ng-value="adoptionStatus.adoptionStatusId" ng-repeat="adoptionStatus in vm.adoptionStatuses">{{ adoptionStatus.description }}</md-option>
+                            </md-select>
+                            <div ng-if="vm.errors.adoptionStatus" class="md-label">
+                                <div class="error-msg invalid">{{vm.errors.adoptionStatus.message}}</div>
+                            </div>
+                        </md-input-container>
+                    </div>
+                </div>
+            </div>
+        </md-content>
+        <md-content class="md-padding">
+            <form name="userForm">
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label ng-class="{invalid : vm.errors.height != null && vm.errors.height.message.length > 0}">Height (cm)</label>
+                        <input ng-model="vm.selectedDog.height" ng-keypress="vm.errors.height = {}" ng-class="{'invalid-input' : vm.errors.height != null && vm.errors.height.message.length > 0}">
+                        <div ng-if="vm.errors.height" class="md-label">
+                            <div class="error-msg invalid">{{vm.errors.height.message}}</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container flex>
+                        <label ng-class="{invalid : vm.errors.age != null && vm.errors.age.message.length > 0}">Age (years)</label>
+                        <input ng-model="vm.selectedDog.age" ng-keypress="vm.errors.age = {}" ng-class="{'invalid-input' : vm.errors.age != null && vm.errors.age.message.length > 0}">
+                        <div ng-if="vm.errors.age" class="md-label">
+                            <div class="error-msg invalid">{{vm.errors.age.message}}</div>
+                        </div>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label ng-class="{invalid : vm.errors.weight != null && vm.errors.weight.message.length > 0}">Weight (lb)</label>
+                        <input name="weight" ng-keypress="vm.errors.weight = {}" ng-model="vm.selectedDog.weight" ng-class="{'invalid-input' : vm.errors.weight != null && vm.errors.weight.message.length > 0}">
+                        <div ng-if="vm.errors.weight" class="md-label">
+                            <div class="error-msg invalid">{{vm.errors.weight.message}}</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container flex>
+                        <label>Eligble Foster Parents</label>
+                        <md-select ng-model="vm.selectedDog.careGiverId">
+                            <md-option ng-value="user.userId" ng-repeat="user in vm.users" ng-if="user.userTypeId == 1">{{ user.firstName + " " + user.lastName }}</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Profile Url</label>
+                        <input ng-model="vm.selectedDog.profileUrl"></input>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>About</label>
+                        <textarea ng-model="vm.selectedDog.about" columns="1" md-maxlength="140"></textarea>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <div flex>
+                        <md-toolbar class="md-theme-light">
+                            <h2 class="md-toolbar-tools">
+                                <span>Incidents</span>
+                            </h2>
+                        </md-toolbar>
+                        <md-content class="md-padding">
+                            <div layout layout-sm="column">
+                                <div ng-if="vm.selectedDog.length == 0">
+                                    <i>No incidents logged.</i>
+                                </div>
+                                <ul>
+                                    <li ng-repeat="incident in vm.selectedDog.incidents">
+                                        <p>
+                                            <b>Message:</b> {{incident.message}} |
+                                            <b>Logged at:</b> {{incident.created_at | date:'yyyy-MM-dd'}} |
+                                            <b>Status:</b> {{incident.incidentStatusId | incidentStatusFilter: vm.incidentStatuses}}
+                                            |
+                                            <b>Severity:</b> {{incident.severityTypeId | severityTypeFilter: vm.severityTypes}}
+                                            |
+                                            <b>Type:</b> {{incident.incidentTypeId | incidentTypeFilter: vm.incidentTypes}}
+                                            |
+                                            <b>Requested by:</b> {{incident.requestingPartyId}}
+                                        </p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </md-content>
+                    </div>
+                </div>
+                <div layout layout-sm="column">
+
+                    <div flex>
+                        <md-toolbar class="md-theme-light">
+                            <h2 class="md-toolbar-tools">
+                                <span>Vaccination</span>
+                            </h2>
+                        </md-toolbar>
+                        <md-content class="md-padding">
+                            <div layout layout-sm="column">
+                                <md-list flex>
+                                    <md-list-item class="md-2-line" ng-repeat="item in vm.vaccination">
+                                        <div class="md-tile-content md-avatar">
+                                            <i class="material-icons md-36">add_circle_outline</i>
+                                        </div>
+                                        <div class="md-list-item-text" layout="column">
+                                            <h3>{{item.info}}</h3>
+                                            <p>{{item.created_at | date:'yyyy-MM-dd'}}</p>
+                                        </div>
+                                    </md-list-item>
+                                    <md-list-item>
+                                        <div class="md-list-item-text">
+                                            <md-input-container flex>
+                                                <label ng-class="{invalid : vm.errors.vaccination != null && vm.errors.vaccination.message.length > 0}">New Vaccination</label>
+                                                <input ng-model="vm.newVaccination" ng-keypress="vm.errors.vaccination = {}" ng-class="{'invalid-input' : vm.errors.vaccination != null && vm.errors.vaccination.message.length > 0}">
+                                                <div ng-if="vm.errors.vaccination" class="md-label">
+                                                    <div class="error-msg invalid">{{vm.errors.vaccination.message}}</div>
+                                                </div>
+                                            </md-input-container>
+                                            <md-button class="md-raised md-accent" ng-click="vm.addVaccination()">
+                                                <i class="material-icons md-36">add</i>
+                                            </md-button>
+                                        </div>
+                                    </md-list-item>
+                                </md-list>
+                            </div>
+                        </md-content>
+                    </div>
+                    <div flex>
+                        <md-toolbar class="md-theme-light">
+                            <h2 class="md-toolbar-tools">
+                                <span>Medicals</span>
+                            </h2>
+                        </md-toolbar>
+                        <md-content class="md-padding">
+                            <div layout layout-sm="column">
+                                <md-list flex>
+                                    <md-list-item class="md-2-line" ng-repeat="item in vm.medicals">
+                                        <div class="md-tile-content md-avatar">
+                                            <i class="material-icons md-36">favorite</i>
+                                        </div>
+                                        <div class="md-list-item-text" layout="column">
+                                            <h3>{{item.info}}</h3>
+                                            <p>{{item.created_at | date:'yyyy-MM-dd'}}</p>
+                                        </div>
+                                    </md-list-item>
+                                    <md-list-item>
+                                        <div class="md-list-item-text">
+                                            <md-input-container flex>
+                                                <label ng-class="{invalid : vm.errors.medicals != null && vm.errors.medicals.message.length > 0}">New Medicals</label>
+                                                <input ng-model="vm.newMedicals" ng-keypress="vm.errors.medicals = {}" ng-class="{'invalid-input' : vm.errors.medicals != null && vm.errors.medicals.message.length > 0}">
+                                                <div ng-if="vm.errors.medicals" class="md-label">
+                                                    <div class="error-msg invalid">{{vm.errors.medicals.message}}</div>
+                                                </div>
+                                            </md-input-container>
+                                            <md-button class="md-raised md-accent" ng-click="vm.addMedicals()">
+                                                <i class="material-icons md-36">add</i>
+                                            </md-button>
+                                        </div>
+                                    </md-list-item>
+                                </md-list>
+                            </div>
+                        </md-content>
+                    </div>
+
+                    <div flex>
+                        <md-toolbar class="md-theme-light">
+                            <h2 class="md-toolbar-tools">
+                                <span>Training</span>
+                            </h2>
+                        </md-toolbar>
+                        <md-content class="md-padding">
+                            <div layout layout-sm="column">
+                                <md-list flex>
+                                    <md-list-item class="md-2-line" ng-repeat="item in vm.fitness">
+                                        <div class="md-tile-content md-avatar">
+                                            <i class="material-icons md-36">fitness_center</i>
+                                        </div>
+                                        <div class="md-list-item-text" layout="column">
+                                            <h3>{{item.info}}</h3>
+                                            <p>{{item.created_at | date:'yyyy-MM-dd'}}</p>
+                                        </div>
+                                    </md-list-item>
+                                    <md-list-item>
+                                        <div class="md-list-item-text">
+                                            <md-input-container flex>
+                                                <label ng-class="{invalid : vm.errors.training != null && vm.errors.training.message.length > 0}">New Training</label>
+                                                <input ng-model="vm.newTraining" ng-keypress="vm.errors.training = {}" ng-class="{'invalid-input' : vm.errors.training != null && vm.errors.training.message.length > 0}">
+                                                <div ng-if="vm.errors.training" class="md-label">
+                                                    <div class="error-msg invalid">{{vm.errors.training.message}}</div>
+                                                </div>
+                                            </md-input-container>
+                                            <md-button class="md-raised md-accent" ng-click="vm.addTraining()">
+                                                <i class="material-icons md-36">add</i>
+                                            </md-button>
+                                        </div>
+                                    </md-list-item>
+                                </md-list>
+                            </div>
+                        </md-content>
+                    </div>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container style="text-align: right;" flex>
+                        <md-button ng-click="vm.chatDog(vm.selectedDog.dogId)" class="md-raised md-accent">
+                            Chat
+                        </md-button>
+                        <md-button ng-click="vm.updateDog()" class="md-raised md-accent">
+                            Update
+                        </md-button>
+                    </md-input-container>
+                </div>
+            </form>
+        </md-content>
+    </div>
+
+    <!-- New dog -->
+    <div ng-if="vm.isNewDog">
+        <md-content md-theme="dark" class="md-padding">
+            <div layout layout-sm="column">
+                <md-input-container flex="20">
+                    <img style="border-radius: 50%; width: 125px; height: 125px;" ng-src="{{vm.newDog.profileUrl}}" />
+                </md-input-container>
+                <div flex="80">
+                    <div layout layout-sm="column">
+                        <md-input-container flex>
+                            <label ng-class="{invalid : vm.errors.name != null && vm.errors.name.message.length > 0}">Dog Name</label>
+                            <input ng-model="vm.newDog.name" ng-keypress="vm.errors.name = {}" ng-class="{'invalid-input' : vm.errors.name != null && vm.errors.name.message.length > 0}">
+                            <div ng-if="vm.errors.name" class="md-label">
+                                <div class="error-msg invalid">{{vm.errors.name.message}}</div>
+                            </div>
+                        </md-input-container>
+                    </div>
+                    <div layout layout-sm="column">
+                        <md-input-container flex>
+                            <label>Dog Type</label>
+                            <md-select ng-model="vm.newDog.dogTypeId">
+                                <md-option ng-value="dogType.dogTypeId" ng-repeat="dogType in vm.dogTypes">{{ dogType.description }}</md-option>
+                            </md-select>
+                        </md-input-container>
+                        <md-input-container flex>
+                            <label ng-class="{invalid : vm.errors.adoptionStatus != null && vm.errors.adoptionStatus.message.length > 0}">Adoption Status</label>
+                            <md-select ng-model="vm.newDog.adoptionStatus" ng-change="vm.errors.adoptionStatus = {}" ng-class="{'invalid-input' : vm.errors.adoptionStatus != null && vm.errors.adoptionStatus.message.length > 0}">
+                                <md-option ng-value="adoptionStatus.adoptionStatusId" ng-repeat="adoptionStatus in vm.adoptionStatuses">{{ adoptionStatus.description }}</md-option>
+                            </md-select>
+                            <div ng-if="vm.errors.adoptionStatus" class="md-label">
+                                <div class="error-msg invalid">{{vm.errors.adoptionStatus.message}}</div>
+                            </div>
+                        </md-input-container>
+                    </div>
+                </div>
+            </div>
+        </md-content>
+        <md-content class="md-padding">
+            <form name="userFormNew">
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label ng-class="{invalid : vm.errors.height != null && vm.errors.height.message.length > 0}">Height (cm)</label>
+                        <input ng-model="vm.newDog.height" ng-keypress="vm.errors.height = {}" ng-class="{'invalid-input' : vm.errors.height != null && vm.errors.height.message.length > 0}">
+                        <div ng-if="vm.errors.height" class="md-label">
+                            <div class="error-msg invalid">{{vm.errors.height.message}}</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container flex>
+                        <label ng-class="{invalid : vm.errors.age != null && vm.errors.age.message.length > 0}">Age (years)</label>
+                        <input ng-model="vm.newDog.age" ng-keypress="vm.errors.age = {}" ng-class="{'invalid-input' : vm.errors.age != null && vm.errors.age.message.length > 0}">
+                        <div ng-if="vm.errors.age" class="md-label">
+                            <div class="error-msg invalid">{{vm.errors.age.message}}</div>
+                        </div>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label ng-class="{invalid : vm.errors.weight != null && vm.errors.weight.message.length > 0}">Weight (lb)</label>
+                        <input name="weight" ng-keypress="vm.errors.weight = {}" ng-model="vm.newDog.weight" ng-class="{'invalid-input' : vm.errors.weight != null && vm.errors.weight.message.length > 0}">
+                        <div ng-if="vm.errors.weight" class="md-label">
+                            <div class="error-msg invalid">{{vm.errors.weight.message}}</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container flex>
+                        <label>Eligble Foster Parents</label>
+                        <md-select ng-model="vm.newDog.careGiverId">
+                            <md-option ng-value="user.userId" ng-repeat="user in vm.users" ng-if="user.userTypeId == 1">{{ user.firstName + " " + user.lastName }}</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>Profile Url</label>
+                        <input ng-model="vm.newDog.profileUrl"></input>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container flex>
+                        <label>About</label>
+                        <textarea ng-model="vm.newDog.about" columns="1" md-maxlength="140"></textarea>
+                    </md-input-container>
+                </div>
+                <div layout layout-sm="column">
+                    <md-input-container style="text-align: right;" flex>
+                        <md-button ng-click="vm.saveNewDog()" class="md-raised md-accent">
+                            Save
+                        </md-button>
+                    </md-input-container>
+                </div>
+            </form>
+        </md-content>
+    </div>
+
+    <!-- Chat -->
+    <div ng-if="vm.dogChat">
+        <div layout layout-sm="column">
+            <md-input-container flex style="background-color: white;">
+                <form class="chat">
+                    <span></span>
+                    <div class="messages " id="collabthread ">
+                        <div class="message " ng-repeat="m in vm.messages">
+                            <div ng-class="(m.fromID==vm.dogChat.dogId ) ? 'out': 'in' ">
+                                <p ng-if="!vm.isImage(m.content)">{{m.content}}</p>
+                                <img ng-if="vm.isImage(m.content)" src="{{m.content}} " width="300px" height="300px" />
+                                <date ng-if="m.fromID==vm.dogChat.dogId">
+                                    <b>Me</b> {{m.timestamp | date:"MM/dd 'at' h:mma "}}</date>
+                                <date ng-if="m.fromID!=vm.dogChat.dogId">
+                                    <b>{{m.fromID}}</b> {{m.timestamp | date:"MM/dd 'at' h:mma "}}</date>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </md-input-container>
+        </div>
+        <div layout layout-sm="column ">
+            <md-input-container flex>
+                <label>Message</label>
+                <textarea ng-model="vm.newMessage " columns="1 " md-maxlength="140 "></textarea>
+            </md-input-container>
+            <md-button ng-click="vm.sendMessage() " class="md-raised md-accent ">
+                Send
+            </md-button>
+        </div>
+    </div>
+</div>
